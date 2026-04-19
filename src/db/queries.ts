@@ -26,6 +26,14 @@ export type AccountDetail = AccountSummary & {
   ledger: LedgerRow[];
 };
 
+export type NewTransaction = {
+  accountId: number;
+  date: string;
+  type: "deposit" | "withdrawal";
+  amountCents: number;
+  note?: string | null;
+};
+
 type AccountRow = {
   id: number;
   name: string;
@@ -102,6 +110,48 @@ export function listTransactionsForAccount(
     amountCents: row.amount_cents,
     note: row.note,
   }));
+}
+
+export function createTransaction(db: Database, transaction: NewTransaction) {
+  const result = db
+    .prepare(
+      `
+      INSERT INTO transactions (
+        account_id,
+        transaction_date,
+        type,
+        amount_cents,
+        note
+      )
+      VALUES (?, ?, ?, ?, ?)
+      `,
+    )
+    .run(
+      transaction.accountId,
+      transaction.date,
+      transaction.type,
+      transaction.amountCents,
+      transaction.note?.trim() || null,
+    );
+
+  return Number(result.lastInsertRowid);
+}
+
+export function deleteTransaction(
+  db: Database,
+  accountId: number,
+  transactionId: number,
+) {
+  const result = db
+    .prepare(
+      `
+      DELETE FROM transactions
+      WHERE id = ? AND account_id = ?
+      `,
+    )
+    .run(transactionId, accountId);
+
+  return result.changes;
 }
 
 export function listInterestRateChangesForAccount(

@@ -30,6 +30,8 @@ Current scaffold:
 - Imported account data for Isabella, Julian, and Rosalie
 - Dashboard account cards linking to account detail pages
 - Account pages showing transactions and recent ledger rows
+- Add-transaction form on account pages
+- Delete transaction action with confirmation modal
 
 SQLite can be initialized separately with `npm run db:init`.
 The home page now includes a server-rendered SQLite connection check that reads table row counts from the database.
@@ -147,7 +149,9 @@ The app is being built in small verified steps:
 10. Add a seed/import path for pasted spreadsheet history. Done.
 11. Add account transaction pages. Done.
 12. Build the full account ledger.
-13. Add forms for deposits, withdrawals, and interest rate changes.
+13. Add forms for deposits and withdrawals. Done.
+14. Add transaction deletion with confirmation. Done.
+15. Add forms for interest rate changes.
 
 After each step, this README should be updated with the current way to run, verify, and understand the app.
 
@@ -223,8 +227,18 @@ Each account page currently shows:
 - Current balance.
 - Total interest earned.
 - Current annual rate.
-- All source-of-truth transactions.
+- All source-of-truth transactions, newest first.
 - Last 30 calculated ledger rows, newest first.
+- A form to add a deposit or withdrawal.
+- A delete action for each transaction with a confirmation modal.
+
+The add-transaction form validates:
+
+- Date must be a real `YYYY-MM-DD` date.
+- Type must be `deposit` or `withdrawal`.
+- Amount must be greater than zero.
+
+Deleting a transaction removes the source-of-truth transaction row and recalculates future balances and interest.
 
 HTTP verification against the running Docker app confirmed:
 

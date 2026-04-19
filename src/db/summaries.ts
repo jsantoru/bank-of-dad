@@ -74,13 +74,15 @@ export function getAccountPageSummary(
       currentAnnualRate: formatBasisPoints(
         account.currentAnnualRateBasisPoints,
       ),
-      transactions: account.transactions.map((transaction) => ({
-        id: transaction.id,
-        date: transaction.date,
-        type: transaction.type,
-        amount: formatCents(transaction.amountCents),
-        note: transaction.note,
-      })),
+      transactions: [...account.transactions]
+        .reverse()
+        .map((transaction) => ({
+          id: transaction.id,
+          date: transaction.date,
+          type: transaction.type,
+          amount: formatCents(transaction.amountCents),
+          note: transaction.note,
+        })),
       recentLedgerRows: account.ledger
         .slice(-30)
         .reverse()

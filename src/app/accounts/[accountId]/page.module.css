@@ -112,6 +112,167 @@
   margin: 0;
 }
 
+.transactionForm {
+  display: grid;
+  gap: 16px;
+}
+
+.formGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1.1fr 1fr 1fr 2fr;
+}
+
+.transactionForm label {
+  display: grid;
+  gap: 6px;
+}
+
+.transactionForm label span {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.transactionForm input,
+.transactionForm select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  min-height: 40px;
+  padding: 0 10px;
+  width: 100%;
+}
+
+.transactionForm input:focus,
+.transactionForm select:focus {
+  border-color: var(--accent);
+  outline: 2px solid color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.formFooter {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.formFooter button {
+  background: var(--text);
+  border: 1px solid var(--text);
+  border-radius: 6px;
+  color: var(--surface);
+  cursor: pointer;
+  font-weight: 700;
+  min-height: 40px;
+  padding: 0 14px;
+}
+
+.formFooter button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.formError {
+  color: #b42318;
+  font-size: 0.875rem;
+  font-weight: 650;
+  margin: 0;
+}
+
+.deleteButton {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: #b42318;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  min-height: 32px;
+  padding: 0 10px;
+}
+
+.deleteButton:hover {
+  border-color: #fecdca;
+  background: #fffbfa;
+}
+
+.actionCell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.modalBackdrop {
+  align-items: center;
+  background: rgb(31 31 31 / 0.35);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 20px;
+  position: fixed;
+  z-index: 20;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-sizing: border-box;
+  box-shadow: 0 24px 80px rgb(31 31 31 / 0.18);
+  max-width: 420px;
+  padding: 22px;
+  width: min(100%, 420px);
+}
+
+.modal h3 {
+  font-size: 1.25rem;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.modal p {
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 10px 0 0;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 22px;
+}
+
+.secondaryButton,
+.dangerButton {
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  min-height: 38px;
+  padding: 0 12px;
+}
+
+.secondaryButton {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.dangerButton {
+  background: #b42318;
+  border: 1px solid #b42318;
+  color: #ffffff;
+}
+
+.secondaryButton:disabled,
+.dangerButton:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
 .tableWrap {
   overflow-x: auto;
 }
@@ -166,5 +327,13 @@
   .statGrid {
     grid-template-columns: 1fr;
   }
-}
 
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formFooter {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

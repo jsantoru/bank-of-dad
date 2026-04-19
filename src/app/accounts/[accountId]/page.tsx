@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAccountPageSummary } from "@/db/summaries";
+import { AddTransactionForm } from "./add-transaction-form";
+import { DeleteTransactionButton } from "./delete-transaction-button";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -54,6 +56,17 @@ export default async function AccountPage({ params }: AccountPageProps) {
       <section className={styles.panel}>
         <div className={styles.sectionHeader}>
           <div>
+            <span className={styles.label}>New entry</span>
+            <h2>Add transaction</h2>
+          </div>
+        </div>
+
+        <AddTransactionForm accountId={account.id} />
+      </section>
+
+      <section className={styles.panel}>
+        <div className={styles.sectionHeader}>
+          <div>
             <span className={styles.label}>Source of truth</span>
             <h2>Transactions</h2>
           </div>
@@ -70,6 +83,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
                   <th>Type</th>
                   <th className={styles.amountCell}>Amount</th>
                   <th>Note</th>
+                  <th className={styles.actionCell}>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -79,6 +93,12 @@ export default async function AccountPage({ params }: AccountPageProps) {
                     <td className={styles.typeCell}>{transaction.type}</td>
                     <td className={styles.amountCell}>{transaction.amount}</td>
                     <td>{transaction.note}</td>
+                    <td className={styles.actionCell}>
+                      <DeleteTransactionButton
+                        accountId={account.id}
+                        transaction={transaction}
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -128,4 +148,3 @@ export default async function AccountPage({ params }: AccountPageProps) {
     </main>
   );
 }
-
