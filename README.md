@@ -1,6 +1,6 @@
 # Bank of Dad
 
-A small local-first web app for tracking kids' savings, deposits, withdrawals, and compound interest.
+A local-first web app for tracking kids' savings, deposits, withdrawals, and compound interest.
 
 <img width="2154" height="1844" alt="image" src="https://github.com/user-attachments/assets/66088ff9-46bf-422d-ad42-0a32c84293ad" />
 
@@ -10,45 +10,62 @@ A small local-first web app for tracking kids' savings, deposits, withdrawals, a
 
 ## Purpose
 
-The goal is to replace a Google Sheets-based family banking spreadsheet with a simple app that preserves historical balances when interest rates change over time.
+Bank of Dad replaces a Google Sheets-based family banking spreadsheet with a small app that preserves historical balances when interest rates change over time.
 
-Instead of using one global interest rate that recalculates all history, the app will store dated interest rate changes. Ledger balances will be calculated from transactions plus the rate that was active on each date.
+Transactions and interest rate changes are stored as separate historical facts. Daily ledger rows are calculated from those facts, so changing a rate for a future date does not rewrite the past.
 
-## Planned Stack
+## Current Stack
 
-- Next.js
+- Next.js App Router
 - TypeScript
+- CSS modules
 - SQLite
 - `better-sqlite3`
 - Docker Compose
+- Vitest
 
-Current scaffold:
+The app is local-first. The SQLite database lives at `data/bank-of-dad.sqlite` and is intentionally tracked in git because the current family banking data is not considered sensitive.
 
-- Next.js app router
-- TypeScript
-- CSS modules
-- Neutral local-first UI shell
-- Docker Compose local development setup
-- SQLite schema and initialization script
-- Money and ledger calculation helpers
-- Focused ledger math tests
-- Spreadsheet CSV import script
-- Imported account data for Isabella, Julian, and Rosalie
-- Dashboard account cards linking to account detail pages
-- Account pages showing transactions and recent ledger rows
-- Add-transaction form on account pages
-- Delete transaction action with confirmation modal
-- Interest rate history on account pages
-- Annual and daily rate columns in recent ledger rows
-- Adjust-rate modal on account pages
-- Tracked local SQLite database file at `data/bank-of-dad.sqlite`
-- Bank-style home dashboard with local cover image
-- Debug database status moved to `/debug`
+## Current Features
 
-SQLite can be initialized separately with `npm run db:init`.
-The home page is a bank-style account dashboard. Database diagnostics are available at `/debug`.
+- Bank-style home dashboard with total balance, total interest, active accounts, and transaction count.
+- Account cards for Isabella, Julian, and Rosalie.
+- Account detail pages at `/accounts/[accountId]`.
+- Source-of-truth transactions, newest first.
+- Add deposit or withdrawal.
+- Delete transactions with a confirmation modal.
+- Account-specific interest rate history.
+- Add or update account-level interest rates by effective date.
+- Recent ledger rows, newest first.
+- Annual and daily interest rate shown for each recent ledger row.
+- SQLite diagnostics at `/debug`.
+- Spreadsheet CSV import script.
 
-## Running Locally
+## Running With Docker
+
+Start the app:
+
+```bash
+docker compose up --build
+```
+
+Open the app:
+
+```text
+http://localhost:3001
+```
+
+Stop the app:
+
+```bash
+docker compose down
+```
+
+The app listens on port `3000` inside the container and is exposed on host port `3001` to avoid conflicts with a non-Docker local Next.js server.
+
+Docker Compose mounts the source tree into the container, keeps `node_modules` and `.next` in Docker volumes, and bind-mounts the local `data/` directory to `/app/data`.
+
+## Running Without Docker
 
 Install dependencies:
 
@@ -65,8 +82,17 @@ npm run dev
 Open the app:
 
 ```text
-http://localhost:3001
+http://localhost:3000
 ```
+
+On Windows PowerShell, if `npm` is blocked by script execution policy, use `npm.cmd`:
+
+```powershell
+npm.cmd install
+npm.cmd run dev
+```
+
+## Useful Commands
 
 Build for production:
 
@@ -80,7 +106,7 @@ Run tests:
 npm test
 ```
 
-Initialize the local SQLite database:
+Initialize the SQLite database:
 
 ```bash
 npm run db:init
@@ -94,105 +120,17 @@ npm run db:import -- "Isabella Checking=C:\path\to\THE BANK OF DAD - Isabella.cs
 
 Multiple accounts can be imported in one command by passing more `Account Name=CSV path` arguments.
 
-By default this creates:
+## Data Model
 
-```text
-data/bank-of-dad.sqlite
-```
-
-This project intentionally tracks `data/bank-of-dad.sqlite` in git because the app is local-first and the current family banking data is not considered sensitive.
-
-On Windows PowerShell, if `npm` is blocked by script execution policy, use:
-
-```powershell
-npm.cmd install
-npm.cmd run dev
-npm.cmd run build
-npm.cmd test
-npm.cmd run db:init
-npm.cmd run db:import -- "Isabella Checking=C:\path\to\THE BANK OF DAD - Isabella.csv"
-```
-
-## Running With Docker
-
-Start the app through Docker Compose:
-
-```bash
-docker compose up --build
-```
-
-Open the app:
-
-```text
-http://localhost:3000
-```
-
-Stop the app:
-
-```bash
-docker compose down
-```
-
-The Compose setup mounts the source tree into the container, keeps `node_modules` and `.next` in Docker volumes, and bind-mounts the ignored local `data/` directory to `/app/data`.
-
-The app listens on port `3000` inside the container and is exposed on host port `3001` to avoid conflicts with a non-Docker local Next.js server.
-
-On startup, Compose runs `npm install` inside the container before starting Next.js. This keeps the Docker `node_modules` volume in sync when dependencies change.
-
-## MVP Scope
-
-- Create and manage child accounts.
-- Record deposits and withdrawals.
-- Record dated interest rate changes.
-- Calculate a daily ledger from historical facts.
-- Show current balance and total interest earned.
-
-## Build Plan
-
-The app is being built in small verified steps:
-
-1. Scaffold the minimal Next.js app shell. Done.
-2. Add Docker local development setup. Done.
-3. Add SQLite database initialization. Done.
-4. Add schema and migration helper. Basic schema done; migrations can be expanded later.
-5. Prove UI-to-SQLite connection. Done.
-6. Implement money and ledger calculation helpers. Done.
-7. Add focused tests for ledger math. Done.
-8. Add account, transaction, and interest rate queries.
-9. Build the dashboard. Started.
-10. Add a seed/import path for pasted spreadsheet history. Done.
-11. Add account transaction pages. Done.
-12. Build the full account ledger.
-13. Add forms for deposits and withdrawals. Done.
-14. Add transaction deletion with confirmation. Done.
-15. Display interest rate history and daily ledger rates. Done.
-16. Add forms for interest rate changes. Done.
-
-After each step, this README should be updated with the current way to run, verify, and understand the app.
-
-## Local-First Direction
-
-The first version will run locally through Docker and persist data in a SQLite database file. The architecture should keep database access isolated so a hosted SQLite-compatible option can be considered later.
-
-The app currently runs as a normal Next.js development server either directly on the host or through Docker Compose. SQLite is initialized by script and will be wired into the UI in a later step.
-
-## Verification
-
-Current verified commands:
-
-```bash
-npm run db:init
-npm test
-npm run build
-```
-
-The database initializes successfully, ledger tests pass, and the production build passes.
-
-The initialized schema currently creates:
+The source-of-truth tables are:
 
 - `accounts`
 - `transactions`
 - `interest_rate_changes`
+
+Transactions do not store interest rates. Interest rates are account-level policy records with effective dates. For each daily ledger row, the app uses the latest rate change whose effective date is on or before that ledger date.
+
+## Interest Calculation
 
 The ledger uses the same daily interest formula as the original spreadsheet:
 
@@ -200,12 +138,24 @@ The ledger uses the same daily interest formula as the original spreadsheet:
 dailyRate = annualRate / 365
 ```
 
-The ledger tests currently verify:
+Daily order of operations:
 
-- Annual interest rate to spreadsheet daily rate conversion.
-- Same-day deposits are applied before interest.
-- The active interest rate changes by date.
-- Withdrawals are applied before interest.
+```text
+starting balance
++ deposits
+- withdrawals
++ daily interest
+= ending balance
+```
+
+Because each day starts from the prior day's ending balance, interest compounds daily.
+
+Current local interest policy:
+
+- `2025-01-01`: 50% annual rate.
+- `2026-01-01`: 25% annual rate.
+
+## Current Data
 
 Current imported local account data:
 
@@ -213,53 +163,13 @@ Current imported local account data:
 - `Julian Checking`: 10 transactions.
 - `Rosalie Checking`: 6 transactions.
 
-Current local interest policy:
-
-- `2025-01-01`: 50% annual rate.
-- `2026-01-01`: 25% annual rate.
-
-Docker verification:
-
-```bash
-docker compose up --build -d
-```
-
-Confirmed the app responds with HTTP `200` at:
+The tracked SQLite file is:
 
 ```text
-http://localhost:3001
+data/bank-of-dad.sqlite
 ```
 
-The Docker-served page also renders the SQLite connection check and table names:
-
-- `accounts`
-- `transactions`
-- `interest_rate_changes`
-
-The dashboard account cards link to account detail pages:
-
-```text
-/accounts/[accountId]
-```
-
-Database/system diagnostics are available at:
-
-```text
-/debug
-```
-
-Each account page currently shows:
-
-- Current balance.
-- Total interest earned.
-- Current annual rate.
-- All source-of-truth transactions, newest first.
-- Last 30 calculated ledger rows, newest first.
-- A form to add a deposit or withdrawal.
-- A delete action for each transaction with a confirmation modal.
-- Interest rate history.
-- Annual and daily interest rate used for each recent ledger row.
-- A modal to add or update an account-level interest rate by effective date.
+## Validation
 
 The add-transaction form validates:
 
@@ -271,18 +181,27 @@ Deleting a transaction removes the source-of-truth transaction row and recalcula
 
 Adding an interest rate change stores an account-specific effective date and annual rate. Ledger rows on and after that date use the new rate until another later rate change exists.
 
-HTTP verification against the running Docker app confirmed:
+## Verification
 
-- `/` returns HTTP `200`.
-- `/accounts/2` returns HTTP `200`.
-- The detail page renders `Isabella Checking` and the transactions table.
-
-Stop the container when done:
+Recently verified:
 
 ```bash
-docker compose down
+npm run build
 ```
+
+The Docker app has also been verified at:
+
+```text
+http://localhost:3001
+```
+
+Key routes:
+
+- `/`
+- `/accounts/[accountId]`
+- `/debug`
 
 ## Documentation
 
 See [docs/implementation-plan.md](docs/implementation-plan.md) for the current implementation plan.
+
