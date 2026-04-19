@@ -4,8 +4,9 @@ A small local-first web app for tracking kids' savings, deposits, withdrawals, a
 
 <img width="2154" height="1844" alt="image" src="https://github.com/user-attachments/assets/66088ff9-46bf-422d-ad42-0a32c84293ad" />
 
-<img width="2160" height="3613" alt="image" src="https://github.com/user-attachments/assets/3ba17df2-a72e-4b96-a52a-cd2aa917cd03" />
+---
 
+<img width="1428" height="1280" alt="image" src="https://github.com/user-attachments/assets/a0587e8e-9784-45c7-ac35-a758ba8bda82" />
 
 ## Purpose
 
