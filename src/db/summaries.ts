@@ -1,4 +1,4 @@
-import { formatBasisPoints, formatCents } from "@/domain/money";
+import { formatBasisPoints, formatCents, formatRate } from "@/domain/money";
 import { initializeDatabase, openDatabase } from "./index";
 import { getAccountDetail, listAccountSummaries } from "./queries";
 
@@ -11,7 +11,20 @@ export type DashboardAccountSummary = {
   currentAnnualRate: string;
 };
 
+export type DashboardOverview = {
+  accounts: DashboardAccountSummary[];
+  totalBalance: string;
+  totalInterest: string;
+  activeAccounts: number;
+  totalTransactions: number;
+};
+
 export type AccountPageSummary = DashboardAccountSummary & {
+  interestRateChanges: Array<{
+    id: number;
+    effectiveDate: string;
+    annualRate: string;
+  }>;
   transactions: Array<{
     id: number;
     date: string;
@@ -24,6 +37,8 @@ export type AccountPageSummary = DashboardAccountSummary & {
     startingBalance: string;
     deposits: string;
     withdrawals: string;
+    annualRate: string;
+    dailyRate: string;
     interest: string;
     endingBalance: string;
     totalInterest: string;
@@ -46,6 +61,48 @@ export function getDashboardAccountSummaries(): DashboardAccountSummary[] {
         account.currentAnnualRateBasisPoints,
       ),
     }));
+  } finally {
+    db.close();
+  }
+}
+
+export function getDashboardOverview(): DashboardOverview {
+  const db = openDatabase();
+
+  try {
+    initializeDatabase(db);
+
+    const accountSummaries = listAccountSummaries(db);
+
+    return {
+      accounts: accountSummaries.map((account) => ({
+        id: account.id,
+        name: account.name,
+        currentBalance: formatCents(account.currentBalanceCents),
+        totalInterest: formatCents(account.totalInterestCents),
+        transactionCount: account.transactionCount,
+        currentAnnualRate: formatBasisPoints(
+          account.currentAnnualRateBasisPoints,
+        ),
+      })),
+      totalBalance: formatCents(
+        accountSummaries.reduce(
+          (total, account) => total + account.currentBalanceCents,
+          0,
+        ),
+      ),
+      totalInterest: formatCents(
+        accountSummaries.reduce(
+          (total, account) => total + account.totalInterestCents,
+          0,
+        ),
+      ),
+      activeAccounts: accountSummaries.length,
+      totalTransactions: accountSummaries.reduce(
+        (total, account) => total + account.transactionCount,
+        0,
+      ),
+    };
   } finally {
     db.close();
   }
@@ -74,6 +131,13 @@ export function getAccountPageSummary(
       currentAnnualRate: formatBasisPoints(
         account.currentAnnualRateBasisPoints,
       ),
+      interestRateChanges: [...account.interestRateChanges]
+        .reverse()
+        .map((rate) => ({
+          id: rate.id,
+          effectiveDate: rate.effectiveDate,
+          annualRate: formatBasisPoints(rate.annualRateBasisPoints),
+        })),
       transactions: [...account.transactions]
         .reverse()
         .map((transaction) => ({
@@ -91,6 +155,8 @@ export function getAccountPageSummary(
           startingBalance: formatCents(row.startingBalanceCents),
           deposits: formatCents(row.depositsCents),
           withdrawals: formatCents(row.withdrawalsCents),
+          annualRate: formatBasisPoints(row.annualRateBasisPoints),
+          dailyRate: formatRate(row.dailyInterestRate),
           interest: formatCents(row.interestCents),
           endingBalance: formatCents(row.endingBalanceCents),
           totalInterest: formatCents(row.totalInterestCents),

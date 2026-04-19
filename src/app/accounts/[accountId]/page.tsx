@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getAccountPageSummary } from "@/db/summaries";
 import { AddTransactionForm } from "./add-transaction-form";
 import { DeleteTransactionButton } from "./delete-transaction-button";
+import { InterestRateButton } from "./interest-rate-button";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -67,6 +68,25 @@ export default async function AccountPage({ params }: AccountPageProps) {
       <section className={styles.panel}>
         <div className={styles.sectionHeader}>
           <div>
+            <span className={styles.label}>Policy</span>
+            <h2>Interest rate history</h2>
+          </div>
+          <InterestRateButton accountId={account.id} />
+        </div>
+
+        <div className={styles.rateHistory}>
+          {account.interestRateChanges.map((rate) => (
+            <div className={styles.rateRow} key={rate.id}>
+              <span>{rate.effectiveDate}</span>
+              <strong>{rate.annualRate}</strong>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.panel}>
+        <div className={styles.sectionHeader}>
+          <div>
             <span className={styles.label}>Source of truth</span>
             <h2>Transactions</h2>
           </div>
@@ -124,6 +144,8 @@ export default async function AccountPage({ params }: AccountPageProps) {
                 <th className={styles.amountCell}>Starting</th>
                 <th className={styles.amountCell}>Deposits</th>
                 <th className={styles.amountCell}>Withdrawals</th>
+                <th className={styles.amountCell}>Annual Rate</th>
+                <th className={styles.amountCell}>Daily Rate</th>
                 <th className={styles.amountCell}>Interest</th>
                 <th className={styles.amountCell}>Ending</th>
                 <th className={styles.amountCell}>Total Interest</th>
@@ -136,6 +158,8 @@ export default async function AccountPage({ params }: AccountPageProps) {
                   <td className={styles.amountCell}>{row.startingBalance}</td>
                   <td className={styles.amountCell}>{row.deposits}</td>
                   <td className={styles.amountCell}>{row.withdrawals}</td>
+                  <td className={styles.amountCell}>{row.annualRate}</td>
+                  <td className={styles.amountCell}>{row.dailyRate}</td>
                   <td className={styles.amountCell}>{row.interest}</td>
                   <td className={styles.amountCell}>{row.endingBalance}</td>
                   <td className={styles.amountCell}>{row.totalInterest}</td>

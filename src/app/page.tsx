@@ -1,79 +1,108 @@
 import Link from "next/link";
 import styles from "./page.module.css";
-import { getDatabaseStatus } from "@/db/status";
-import { getDashboardAccountSummaries } from "@/db/summaries";
+import { getDashboardOverview } from "@/db/summaries";
 
 export const dynamic = "force-dynamic";
 
 export default function Home() {
-  const databaseStatus = getDatabaseStatus();
-  const accountSummaries = getDashboardAccountSummaries();
+  const dashboard = getDashboardOverview();
 
   return (
     <main className={styles.page}>
+      <header className={styles.topbar}>
+        <div>
+          <span className={styles.brandMark}>BOD</span>
+          <span className={styles.brandName}>The Bank of Dad</span>
+        </div>
+        <Link className={styles.debugLink} href="/debug">
+          System status
+        </Link>
+      </header>
+
       <section className={styles.hero}>
-        <p className={styles.eyebrow}>Local-first family banking</p>
-        <h1>The Bank of Dad</h1>
-        <p className={styles.lede}>
-          Track deposits, withdrawals, and compound interest without rewriting
-          history when rates change.
-        </p>
+        <div className={styles.heroCopy}>
+          <p className={styles.eyebrow}>Private family banking</p>
+          <h1>Compound interest, made visible.</h1>
+          <p className={styles.lede}>
+            Track each account with dated deposits, withdrawals, and
+            account-specific interest policies without rewriting history.
+          </p>
+          <div className={styles.heroActions}>
+            <Link href="/#accounts">View accounts</Link>
+          </div>
+        </div>
+        <div
+          aria-label="Coin being deposited into a piggy bank"
+          className={styles.heroImage}
+          role="img"
+        />
       </section>
 
-      <section className={styles.cardGrid} aria-label="App status">
-        <article className={styles.card}>
-          <span className={styles.label}>Current Step</span>
-          <strong>App shell</strong>
-          <p>Next.js is scaffolded and ready for the first data layer.</p>
+      <section className={styles.overview} aria-label="Bank overview">
+        <article className={styles.overviewCard}>
+          <span className={styles.label}>Total balance</span>
+          <strong>{dashboard.totalBalance}</strong>
         </article>
-        <article className={styles.card}>
-          <span className={styles.label}>Database</span>
-          <strong>SQLite connected</strong>
-          <p>The home page is reading database metadata on the server.</p>
+        <article className={styles.overviewCard}>
+          <span className={styles.label}>Interest earned</span>
+          <strong>{dashboard.totalInterest}</strong>
+        </article>
+        <article className={styles.overviewCard}>
+          <span className={styles.label}>Active accounts</span>
+          <strong>{dashboard.activeAccounts}</strong>
+        </article>
+        <article className={styles.overviewCard}>
+          <span className={styles.label}>Transactions</span>
+          <strong>{dashboard.totalTransactions}</strong>
         </article>
       </section>
 
-      <section className={styles.dashboard} aria-label="Accounts dashboard">
+      <section
+        className={styles.dashboard}
+        id="accounts"
+        aria-label="Accounts dashboard"
+      >
         <div className={styles.sectionHeader}>
           <div>
-            <span className={styles.label}>Dashboard</span>
-            <h2>Accounts</h2>
+            <span className={styles.label}>Accounts</span>
+            <h2>Family portfolio</h2>
           </div>
           <span className={styles.countBadge}>
-            {accountSummaries.length}{" "}
-            {accountSummaries.length === 1 ? "account" : "accounts"}
+            {dashboard.activeAccounts}{" "}
+            {dashboard.activeAccounts === 1 ? "account" : "accounts"}
           </span>
         </div>
 
-        {accountSummaries.length === 0 ? (
+        {dashboard.accounts.length === 0 ? (
           <div className={styles.emptyState}>
             <strong>No accounts yet</strong>
             <p>
-              Run <code>npm run db:seed</code> to add sample data, or add real
-              accounts once the forms are built.
+              Import spreadsheet history or add an account once account
+              creation is available.
             </p>
           </div>
         ) : (
           <div className={styles.accountGrid}>
-            {accountSummaries.map((account) => (
+            {dashboard.accounts.map((account) => (
               <Link
                 className={styles.accountCard}
                 href={`/accounts/${account.id}`}
                 key={account.id}
               >
-                <div>
-                  <span className={styles.label}>Account</span>
-                  <h3>{account.name}</h3>
+                <div className={styles.accountHeader}>
+                  <div>
+                    <span className={styles.label}>Checking</span>
+                    <h3>{account.name}</h3>
+                  </div>
+                  <span className={styles.ratePill}>
+                    {account.currentAnnualRate}
+                  </span>
                 </div>
                 <div className={styles.balance}>{account.currentBalance}</div>
                 <dl className={styles.summaryStats}>
                   <div>
                     <dt>Interest earned</dt>
                     <dd>{account.totalInterest}</dd>
-                  </div>
-                  <div>
-                    <dt>Current rate</dt>
-                    <dd>{account.currentAnnualRate}</dd>
                   </div>
                   <div>
                     <dt>Transactions</dt>
@@ -84,28 +113,6 @@ export default function Home() {
             ))}
           </div>
         )}
-      </section>
-
-      <section className={styles.statusPanel} aria-label="Database status">
-        <div>
-          <span className={styles.label}>SQLite Database</span>
-          <h2>Connection check</h2>
-          <p>
-            The app opened the local SQLite database, applied the schema, and
-            read row counts from the source-of-truth tables.
-          </p>
-        </div>
-
-        <div className={styles.databasePath}>{databaseStatus.databasePath}</div>
-
-        <div className={styles.tableList}>
-          {databaseStatus.tables.map((table) => (
-            <div className={styles.tableRow} key={table.name}>
-              <span>{table.name}</span>
-              <strong>{table.rowCount}</strong>
-            </div>
-          ))}
-        </div>
       </section>
     </main>
   );

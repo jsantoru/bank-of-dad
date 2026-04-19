@@ -34,6 +34,12 @@ export type NewTransaction = {
   note?: string | null;
 };
 
+export type NewInterestRateChange = {
+  accountId: number;
+  effectiveDate: string;
+  annualRateBasisPoints: number;
+};
+
 type AccountRow = {
   id: number;
   name: string;
@@ -150,6 +156,33 @@ export function deleteTransaction(
       `,
     )
     .run(transactionId, accountId);
+
+  return result.changes;
+}
+
+export function upsertInterestRateChange(
+  db: Database,
+  rateChange: NewInterestRateChange,
+) {
+  const result = db
+    .prepare(
+      `
+      INSERT INTO interest_rate_changes (
+        account_id,
+        effective_date,
+        annual_rate_basis_points
+      )
+      VALUES (?, ?, ?)
+      ON CONFLICT(account_id, effective_date) DO UPDATE SET
+        annual_rate_basis_points = excluded.annual_rate_basis_points,
+        updated_at = CURRENT_TIMESTAMP
+      `,
+    )
+    .run(
+      rateChange.accountId,
+      rateChange.effectiveDate,
+      rateChange.annualRateBasisPoints,
+    );
 
   return result.changes;
 }

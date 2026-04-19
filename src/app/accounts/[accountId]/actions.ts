@@ -1,11 +1,19 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createTransaction, deleteTransaction } from "@/db/queries";
+import {
+  createTransaction,
+  deleteTransaction,
+  upsertInterestRateChange,
+} from "@/db/queries";
 import { initializeDatabase, openDatabase } from "@/db";
 import { dollarsToCents } from "@/domain/money";
 
 type AddTransactionState = {
+  error?: string;
+};
+
+type AddInterestRateState = {
   error?: string;
 };
 
@@ -81,6 +89,43 @@ export async function removeTransaction(
 
   revalidatePath("/");
   revalidatePath(`/accounts/${accountId}`);
+}
+
+export async function addInterestRateChange(
+  accountId: number,
+  _previousState: AddInterestRateState,
+  formData: FormData,
+): Promise<AddInterestRateState> {
+  const effectiveDate = String(formData.get("effectiveDate") ?? "").trim();
+  const annualRate = Number(String(formData.get("annualRate") ?? "").trim());
+
+  if (!isValidDate(effectiveDate)) {
+    return { error: "Enter a valid effective date." };
+  }
+
+  if (!Number.isFinite(annualRate) || annualRate < 0) {
+    return { error: "Enter an annual rate of zero or higher." };
+  }
+
+  const annualRateBasisPoints = Math.round(annualRate * 100);
+
+  const db = openDatabase();
+
+  try {
+    initializeDatabase(db);
+    upsertInterestRateChange(db, {
+      accountId,
+      effectiveDate,
+      annualRateBasisPoints,
+    });
+  } finally {
+    db.close();
+  }
+
+  revalidatePath("/");
+  revalidatePath(`/accounts/${accountId}`);
+
+  return {};
 }
 
 function isValidDate(value: string) {

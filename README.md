@@ -32,9 +32,15 @@ Current scaffold:
 - Account pages showing transactions and recent ledger rows
 - Add-transaction form on account pages
 - Delete transaction action with confirmation modal
+- Interest rate history on account pages
+- Annual and daily rate columns in recent ledger rows
+- Adjust-rate modal on account pages
+- Tracked local SQLite database file at `data/bank-of-dad.sqlite`
+- Bank-style home dashboard with local cover image
+- Debug database status moved to `/debug`
 
 SQLite can be initialized separately with `npm run db:init`.
-The home page now includes a server-rendered SQLite connection check that reads table row counts from the database.
+The home page is a bank-style account dashboard. Database diagnostics are available at `/debug`.
 
 ## Running Locally
 
@@ -87,6 +93,8 @@ By default this creates:
 ```text
 data/bank-of-dad.sqlite
 ```
+
+This project intentionally tracks `data/bank-of-dad.sqlite` in git because the app is local-first and the current family banking data is not considered sensitive.
 
 On Windows PowerShell, if `npm` is blocked by script execution policy, use:
 
@@ -151,7 +159,8 @@ The app is being built in small verified steps:
 12. Build the full account ledger.
 13. Add forms for deposits and withdrawals. Done.
 14. Add transaction deletion with confirmation. Done.
-15. Add forms for interest rate changes.
+15. Display interest rate history and daily ledger rates. Done.
+16. Add forms for interest rate changes. Done.
 
 After each step, this README should be updated with the current way to run, verify, and understand the app.
 
@@ -194,9 +203,14 @@ The ledger tests currently verify:
 
 Current imported local account data:
 
-- `Isabella Checking`: 5 transactions, 50% annual rate.
-- `Julian Checking`: 10 transactions, 50% annual rate.
-- `Rosalie Checking`: 6 transactions, 50% annual rate.
+- `Isabella Checking`: 5 transactions.
+- `Julian Checking`: 10 transactions.
+- `Rosalie Checking`: 6 transactions.
+
+Current local interest policy:
+
+- `2025-01-01`: 50% annual rate.
+- `2026-01-01`: 25% annual rate.
 
 Docker verification:
 
@@ -222,6 +236,12 @@ The dashboard account cards link to account detail pages:
 /accounts/[accountId]
 ```
 
+Database/system diagnostics are available at:
+
+```text
+/debug
+```
+
 Each account page currently shows:
 
 - Current balance.
@@ -231,6 +251,9 @@ Each account page currently shows:
 - Last 30 calculated ledger rows, newest first.
 - A form to add a deposit or withdrawal.
 - A delete action for each transaction with a confirmation modal.
+- Interest rate history.
+- Annual and daily interest rate used for each recent ledger row.
+- A modal to add or update an account-level interest rate by effective date.
 
 The add-transaction form validates:
 
@@ -239,6 +262,8 @@ The add-transaction form validates:
 - Amount must be greater than zero.
 
 Deleting a transaction removes the source-of-truth transaction row and recalculates future balances and interest.
+
+Adding an interest rate change stores an account-specific effective date and annual rate. Ledger rows on and after that date use the new rate until another later rate change exists.
 
 HTTP verification against the running Docker app confirmed:
 

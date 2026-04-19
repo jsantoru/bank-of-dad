@@ -25,3 +25,6 @@ export function formatBasisPoints(basisPoints: number) {
   return `${(basisPoints / 100).toFixed(2).replace(/\.00$/, "")}%`;
 }
 
+export function formatRate(rate: number, fractionDigits = 4) {
+  return `${(rate * 100).toFixed(fractionDigits)}%`;
+}

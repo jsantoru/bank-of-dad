@@ -13,10 +13,11 @@ build/
 !.env.example
 
 # local database and runtime data
-data/
 *.sqlite
 *.sqlite3
 *.db
+!data/
+!data/bank-of-dad.sqlite
 
 # logs
 *.log
@@ -30,4 +31,3 @@ pnpm-debug.log*
 Thumbs.db
 .vscode/
 .idea/
-
