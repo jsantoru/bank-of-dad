@@ -122,10 +122,10 @@ starting balance
 Daily rate:
 
 ```text
-dailyRate = (1 + annualRate) ^ (1 / 365) - 1
+dailyRate = annualRate / 365
 ```
 
-Interest should be rounded to cents per day for display and consistency with the spreadsheet-style ledger.
+This matches the current spreadsheet's daily rate behavior. Interest should be rounded to cents per day for display and consistency with the spreadsheet-style ledger.
 
 ## Initial Screens
 
@@ -195,4 +195,3 @@ The local SQLite setup should be portable to hosted SQLite-like options later:
 - Small VPS with SQLite
 
 If hosting becomes a priority, the main migration point should be the DB adapter layer, not the domain or UI code.
-

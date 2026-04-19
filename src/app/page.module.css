@@ -64,6 +64,179 @@
   font-weight: 650;
 }
 
+.statusPanel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 16px;
+  padding: 24px;
+}
+
+.statusPanel h2 {
+  font-size: 1.5rem;
+  margin: 8px 0 0;
+}
+
+.statusPanel p {
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 680px;
+}
+
+.databasePath {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    "Liberation Mono",
+    monospace;
+  font-size: 0.875rem;
+  margin-top: 20px;
+  overflow-wrap: anywhere;
+  padding: 12px;
+}
+
+.tableList {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.tableRow {
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 0 14px;
+}
+
+.tableRow span {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+.tableRow strong {
+  color: var(--accent-dark);
+}
+
+.dashboard {
+  margin-top: 32px;
+}
+
+.sectionHeader {
+  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sectionHeader h2 {
+  font-size: 1.75rem;
+  margin: 8px 0 0;
+}
+
+.countBadge {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 650;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.emptyState {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.emptyState strong {
+  display: block;
+  font-size: 1.125rem;
+}
+
+.emptyState p {
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 8px 0 0;
+}
+
+.emptyState code {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 2px 5px;
+}
+
+.accountGrid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.accountCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: inherit;
+  display: block;
+  padding: 20px;
+}
+
+.accountCard:hover {
+  border-color: var(--accent);
+}
+
+.accountCard h3 {
+  font-size: 1.125rem;
+  margin: 8px 0 0;
+}
+
+.balance {
+  color: var(--accent-dark);
+  font-size: 2rem;
+  font-weight: 750;
+  line-height: 1.1;
+  margin-top: 20px;
+}
+
+.summaryStats {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0 0;
+}
+
+.summaryStats div {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.summaryStats dt {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.summaryStats dd {
+  font-weight: 700;
+  margin: 0;
+}
+
 @media (max-width: 720px) {
   .page {
     padding: 40px 18px;
@@ -76,5 +249,13 @@
   .cardGrid {
     grid-template-columns: 1fr;
   }
-}
 
+  .sectionHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .accountGrid {
+    grid-template-columns: 1fr;
+  }
+}

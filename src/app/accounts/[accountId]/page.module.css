@@ -1,0 +1,170 @@
+.page {
+  margin: 0 auto;
+  max-width: 1180px;
+  min-height: 100vh;
+  padding: 40px 24px 64px;
+}
+
+.backLink {
+  color: var(--text-muted);
+  display: inline-flex;
+  font-size: 0.9375rem;
+  font-weight: 650;
+  margin-bottom: 28px;
+}
+
+.backLink:hover {
+  color: var(--text);
+}
+
+.header {
+  align-items: flex-end;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  line-height: 1.1;
+  margin: 8px 0 0;
+}
+
+.label {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.balanceBlock {
+  text-align: right;
+}
+
+.balanceBlock span {
+  color: var(--text-muted);
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 650;
+  margin-bottom: 6px;
+}
+
+.balanceBlock strong {
+  color: var(--accent-dark);
+  display: block;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.statGrid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 28px;
+}
+
+.statGrid article {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.statGrid strong {
+  display: block;
+  font-size: 1.35rem;
+  margin-top: 8px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 24px;
+  padding: 20px;
+}
+
+.sectionHeader {
+  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sectionHeader h2 {
+  font-size: 1.35rem;
+  margin: 6px 0 0;
+}
+
+.badge {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.emptyText {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  border-collapse: collapse;
+  min-width: 760px;
+  width: 100%;
+}
+
+.table th {
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  padding: 10px 8px;
+  text-align: left;
+}
+
+.table td {
+  border-bottom: 1px solid var(--surface-muted);
+  padding: 12px 8px;
+}
+
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+.amountCell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.typeCell {
+  text-transform: capitalize;
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 32px 18px 48px;
+  }
+
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .balanceBlock {
+    text-align: left;
+  }
+
+  .statGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
