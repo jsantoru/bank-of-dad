@@ -2,6 +2,11 @@
 
 A small local-first web app for tracking kids' savings, deposits, withdrawals, and compound interest.
 
+<img width="2154" height="1844" alt="image" src="https://github.com/user-attachments/assets/66088ff9-46bf-422d-ad42-0a32c84293ad" />
+
+<img width="2160" height="3613" alt="image" src="https://github.com/user-attachments/assets/3ba17df2-a72e-4b96-a52a-cd2aa917cd03" />
+
+
 ## Purpose
 
 The goal is to replace a Google Sheets-based family banking spreadsheet with a simple app that preserves historical balances when interest rates change over time.
