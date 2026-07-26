@@ -41,6 +41,36 @@ The app is local-first. The SQLite database lives at `data/bank-of-dad.sqlite` a
 - SQLite diagnostics at `/debug`.
 - Spreadsheet CSV import script.
 
+## Authentication
+
+The app is protected with HTTP Basic Auth using a single username and password.
+
+### Local Development
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Edit `.env.local` and set your desired credentials:
+   ```bash
+   AUTH_USERNAME=your-username
+   AUTH_PASSWORD=your-secure-password
+   ```
+
+3. Start the dev server - you'll be prompted to log in when you visit the site
+
+### Production (Fly.io)
+
+Set the auth credentials as secrets on Fly.io:
+
+```bash
+flyctl secrets set AUTH_USERNAME=your-username
+flyctl secrets set AUTH_PASSWORD=your-secure-password
+```
+
+The app will restart automatically with the new credentials.
+
 ## Production Deployment (Fly.io)
 
 The app is deployed to Fly.io for free 24/7 hosting.
