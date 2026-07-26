@@ -8,8 +8,7 @@ import {
 import { AddTransactionForm } from "./add-transaction-form";
 import { DeleteTransactionButton } from "./delete-transaction-button";
 import { InterestRateButton } from "./interest-rate-button";
-import { AccountBalanceChart } from "@/components/AccountBalanceChart";
-import { TransactionActivityChart } from "@/components/TransactionActivityChart";
+import { AccountChartsSection } from "@/components/AccountChartsSection";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -63,16 +62,11 @@ export default async function AccountPage({ params }: AccountPageProps) {
         </article>
       </section>
 
-      <section className={styles.chartsSection} aria-label="Account visualizations">
-        <div className={styles.chartCard}>
-          <h3 className={styles.chartTitle}>Balance Over Time</h3>
-          <AccountBalanceChart data={balanceOverTime} />
-        </div>
-        <div className={styles.chartCard}>
-          <h3 className={styles.chartTitle}>Monthly Transaction Activity</h3>
-          <TransactionActivityChart data={monthlyTransactions} />
-        </div>
-      </section>
+      <AccountChartsSection
+        accountId={account.id}
+        initialBalanceData={balanceOverTime}
+        initialTransactionData={monthlyTransactions}
+      />
 
       <section className={styles.panel}>
         <div className={styles.sectionHeader}>

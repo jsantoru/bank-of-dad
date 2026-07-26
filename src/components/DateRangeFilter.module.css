@@ -1,0 +1,98 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.button,
+.activeButton {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  padding: 8px 12px;
+  transition: all 0.15s ease;
+}
+
+.button:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+}
+
+.activeButton {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border-color: var(--accent);
+  color: var(--accent-dark);
+}
+
+.customRange {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.customRange label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.customRange label span {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.customRange input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.875rem;
+  padding: 8px 10px;
+  min-height: 38px;
+}
+
+.customRange input:focus {
+  border-color: var(--accent);
+  outline: 2px solid color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.applyButton {
+  background: var(--text);
+  border: 1px solid var(--text);
+  border-radius: 6px;
+  color: var(--surface);
+  cursor: pointer;
+  font-weight: 700;
+  min-height: 38px;
+  padding: 0 16px;
+  white-space: nowrap;
+}
+
+.applyButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (max-width: 720px) {
+  .customRange {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .customRange label {
+    flex: auto;
+  }
+}

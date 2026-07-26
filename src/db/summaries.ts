@@ -185,7 +185,10 @@ export type MonthlyTransactionDataPoint = {
   withdrawals: number; // in dollars
 };
 
-export function getDashboardBalanceOverTime(): BalanceOverTimeDataPoint[] {
+export function getDashboardBalanceOverTime(
+  startDate?: string | null,
+  endDate?: string | null,
+): BalanceOverTimeDataPoint[] {
   const db = openDatabase();
 
   try {
@@ -215,9 +218,19 @@ export function getDashboardBalanceOverTime(): BalanceOverTimeDataPoint[] {
     });
 
     // Convert to array and sort by date
-    return Array.from(dateBalanceMap.entries())
+    let data = Array.from(dateBalanceMap.entries())
       .map(([date, balance]) => ({ date, balance }))
       .sort((a, b) => a.date.localeCompare(b.date));
+
+    // Apply date range filter if specified
+    if (startDate) {
+      data = data.filter((d) => d.date >= startDate);
+    }
+    if (endDate) {
+      data = data.filter((d) => d.date <= endDate);
+    }
+
+    return data;
   } finally {
     db.close();
   }
@@ -244,6 +257,8 @@ export function getDashboardPortfolioComposition(): PortfolioDataPoint[] {
 
 export function getAccountBalanceOverTime(
   accountId: number,
+  startDate?: string | null,
+  endDate?: string | null,
 ): BalanceOverTimeDataPoint[] {
   const db = openDatabase();
 
@@ -253,10 +268,20 @@ export function getAccountBalanceOverTime(
     const account = getAccountDetail(db, accountId);
     if (!account) return [];
 
-    return account.ledger.map((row) => ({
+    let data = account.ledger.map((row) => ({
       date: row.date,
       balance: row.endingBalanceCents / 100,
     }));
+
+    // Apply date range filter if specified
+    if (startDate) {
+      data = data.filter((d) => d.date >= startDate);
+    }
+    if (endDate) {
+      data = data.filter((d) => d.date <= endDate);
+    }
+
+    return data;
   } finally {
     db.close();
   }
@@ -264,6 +289,8 @@ export function getAccountBalanceOverTime(
 
 export function getAccountMonthlyTransactions(
   accountId: number,
+  startDate?: string | null,
+  endDate?: string | null,
 ): MonthlyTransactionDataPoint[] {
   const db = openDatabase();
 
@@ -273,13 +300,22 @@ export function getAccountMonthlyTransactions(
     const account = getAccountDetail(db, accountId);
     if (!account) return [];
 
+    // Filter transactions by date range if specified
+    let transactions = account.transactions;
+    if (startDate) {
+      transactions = transactions.filter((t) => t.date >= startDate);
+    }
+    if (endDate) {
+      transactions = transactions.filter((t) => t.date <= endDate);
+    }
+
     // Group transactions by month
     const monthlyData = new Map<
       string,
       { deposits: number; withdrawals: number }
     >();
 
-    account.transactions.forEach((transaction) => {
+    transactions.forEach((transaction) => {
       const month = transaction.date.substring(0, 7); // YYYY-MM
       const existing = monthlyData.get(month) || { deposits: 0, withdrawals: 0 };
 

@@ -8,8 +8,7 @@ import {
 import { LogoutButton } from "./logout-button";
 import { AuthStatus } from "./auth-status";
 import { PiggyBank } from "lucide-react";
-import { BalanceOverTimeChart } from "@/components/BalanceOverTimeChart";
-import { PortfolioCompositionChart } from "@/components/PortfolioCompositionChart";
+import { DashboardChartsSection } from "@/components/DashboardChartsSection";
 
 export const dynamic = "force-dynamic";
 
@@ -70,16 +69,10 @@ export default function Home() {
       </section>
 
       {dashboard.accounts.length > 0 && (
-        <section className={styles.chartsSection} aria-label="Financial charts">
-          <div className={styles.chartCard}>
-            <h3 className={styles.chartTitle}>Total Balance Over Time</h3>
-            <BalanceOverTimeChart data={balanceOverTime} />
-          </div>
-          <div className={styles.chartCard}>
-            <h3 className={styles.chartTitle}>Portfolio Composition</h3>
-            <PortfolioCompositionChart data={portfolioComposition} />
-          </div>
-        </section>
+        <DashboardChartsSection
+          initialBalanceData={balanceOverTime}
+          portfolioData={portfolioComposition}
+        />
       )}
 
       <section
