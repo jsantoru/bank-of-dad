@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAccountPageSummary } from "@/db/summaries";
+import {
+  getAccountPageSummary,
+  getAccountBalanceOverTime,
+  getAccountMonthlyTransactions,
+} from "@/db/summaries";
 import { AddTransactionForm } from "./add-transaction-form";
 import { DeleteTransactionButton } from "./delete-transaction-button";
 import { InterestRateButton } from "./interest-rate-button";
+import { AccountBalanceChart } from "@/components/AccountBalanceChart";
+import { TransactionActivityChart } from "@/components/TransactionActivityChart";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +27,9 @@ export default async function AccountPage({ params }: AccountPageProps) {
   if (!account) {
     notFound();
   }
+
+  const balanceOverTime = getAccountBalanceOverTime(Number(accountId));
+  const monthlyTransactions = getAccountMonthlyTransactions(Number(accountId));
 
   return (
     <main className={styles.page}>
@@ -52,6 +61,17 @@ export default async function AccountPage({ params }: AccountPageProps) {
           <span className={styles.label}>Transactions</span>
           <strong>{account.transactionCount}</strong>
         </article>
+      </section>
+
+      <section className={styles.chartsSection} aria-label="Account visualizations">
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Balance Over Time</h3>
+          <AccountBalanceChart data={balanceOverTime} />
+        </div>
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Monthly Transaction Activity</h3>
+          <TransactionActivityChart data={monthlyTransactions} />
+        </div>
       </section>
 
       <section className={styles.panel}>

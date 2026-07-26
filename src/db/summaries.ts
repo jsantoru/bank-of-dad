@@ -166,3 +166,140 @@ export function getAccountPageSummary(
     db.close();
   }
 }
+
+// Chart data helpers - return numeric values for visualization
+
+export type BalanceOverTimeDataPoint = {
+  date: string;
+  balance: number; // in dollars
+};
+
+export type PortfolioDataPoint = {
+  name: string;
+  value: number; // in dollars
+};
+
+export type MonthlyTransactionDataPoint = {
+  month: string;
+  deposits: number; // in dollars
+  withdrawals: number; // in dollars
+};
+
+export function getDashboardBalanceOverTime(): BalanceOverTimeDataPoint[] {
+  const db = openDatabase();
+
+  try {
+    initializeDatabase(db);
+
+    const accounts = listAccountSummaries(db);
+    if (accounts.length === 0) return [];
+
+    // Get all account details with full ledger
+    const accountDetails = accounts
+      .map((acc) => getAccountDetail(db, acc.id))
+      .filter((acc) => acc !== null);
+
+    if (accountDetails.length === 0) return [];
+
+    // Build a map of date -> total balance
+    const dateBalanceMap = new Map<string, number>();
+
+    accountDetails.forEach((account) => {
+      account.ledger.forEach((row) => {
+        const currentTotal = dateBalanceMap.get(row.date) || 0;
+        dateBalanceMap.set(
+          row.date,
+          currentTotal + row.endingBalanceCents / 100,
+        );
+      });
+    });
+
+    // Convert to array and sort by date
+    return Array.from(dateBalanceMap.entries())
+      .map(([date, balance]) => ({ date, balance }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+  } finally {
+    db.close();
+  }
+}
+
+export function getDashboardPortfolioComposition(): PortfolioDataPoint[] {
+  const db = openDatabase();
+
+  try {
+    initializeDatabase(db);
+
+    const accounts = listAccountSummaries(db);
+
+    return accounts
+      .map((account) => ({
+        name: account.name,
+        value: account.currentBalanceCents / 100,
+      }))
+      .filter((item) => item.value > 0);
+  } finally {
+    db.close();
+  }
+}
+
+export function getAccountBalanceOverTime(
+  accountId: number,
+): BalanceOverTimeDataPoint[] {
+  const db = openDatabase();
+
+  try {
+    initializeDatabase(db);
+
+    const account = getAccountDetail(db, accountId);
+    if (!account) return [];
+
+    return account.ledger.map((row) => ({
+      date: row.date,
+      balance: row.endingBalanceCents / 100,
+    }));
+  } finally {
+    db.close();
+  }
+}
+
+export function getAccountMonthlyTransactions(
+  accountId: number,
+): MonthlyTransactionDataPoint[] {
+  const db = openDatabase();
+
+  try {
+    initializeDatabase(db);
+
+    const account = getAccountDetail(db, accountId);
+    if (!account) return [];
+
+    // Group transactions by month
+    const monthlyData = new Map<
+      string,
+      { deposits: number; withdrawals: number }
+    >();
+
+    account.transactions.forEach((transaction) => {
+      const month = transaction.date.substring(0, 7); // YYYY-MM
+      const existing = monthlyData.get(month) || { deposits: 0, withdrawals: 0 };
+
+      if (transaction.type === "deposit") {
+        existing.deposits += transaction.amountCents / 100;
+      } else {
+        existing.withdrawals += transaction.amountCents / 100;
+      }
+
+      monthlyData.set(month, existing);
+    });
+
+    return Array.from(monthlyData.entries())
+      .map(([month, data]) => ({
+        month,
+        deposits: data.deposits,
+        withdrawals: data.withdrawals,
+      }))
+      .sort((a, b) => a.month.localeCompare(b.month));
+  } finally {
+    db.close();
+  }
+}

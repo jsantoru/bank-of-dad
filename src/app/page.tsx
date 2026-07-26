@@ -1,14 +1,22 @@
 import Link from "next/link";
 import styles from "./page.module.css";
-import { getDashboardOverview } from "@/db/summaries";
+import {
+  getDashboardOverview,
+  getDashboardBalanceOverTime,
+  getDashboardPortfolioComposition,
+} from "@/db/summaries";
 import { LogoutButton } from "./logout-button";
 import { AuthStatus } from "./auth-status";
 import { PiggyBank } from "lucide-react";
+import { BalanceOverTimeChart } from "@/components/BalanceOverTimeChart";
+import { PortfolioCompositionChart } from "@/components/PortfolioCompositionChart";
 
 export const dynamic = "force-dynamic";
 
 export default function Home() {
   const dashboard = getDashboardOverview();
+  const balanceOverTime = getDashboardBalanceOverTime();
+  const portfolioComposition = getDashboardPortfolioComposition();
 
   return (
     <main className={styles.page}>
@@ -60,6 +68,19 @@ export default function Home() {
           <strong>{dashboard.totalTransactions}</strong>
         </article>
       </section>
+
+      {dashboard.accounts.length > 0 && (
+        <section className={styles.chartsSection} aria-label="Financial charts">
+          <div className={styles.chartCard}>
+            <h3 className={styles.chartTitle}>Total Balance Over Time</h3>
+            <BalanceOverTimeChart data={balanceOverTime} />
+          </div>
+          <div className={styles.chartCard}>
+            <h3 className={styles.chartTitle}>Portfolio Composition</h3>
+            <PortfolioCompositionChart data={portfolioComposition} />
+          </div>
+        </section>
+      )}
 
       <section
         className={styles.dashboard}
