@@ -21,23 +21,31 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+RUN apk add --no-cache su-exec
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Create data directory for SQLite
-RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
+# Create data directory for SQLite (will be mounted as volume)
+RUN mkdir -p /app/data /app/data-init && chown -R nextjs:nodejs /app/data /app/data-init
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/data ./data
 
-USER nextjs
+# Copy initial database to a separate directory (not the mount point)
+COPY --from=builder --chown=nextjs:nodejs /app/data/*.sqlite /app/data-init/
+
+# Copy entrypoint script and make it executable
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh && \
+    chown nextjs:nodejs /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+# Run entrypoint as root to handle volume initialization, then switch to nextjs user
+ENTRYPOINT ["/bin/sh", "-c", "if [ ! -f /app/data/bank-of-dad.sqlite ]; then echo 'Initializing database...'; cp /app/data-init/bank-of-dad.sqlite /app/data/bank-of-dad.sqlite && chown nextjs:nodejs /app/data/bank-of-dad.sqlite; fi && exec su-exec nextjs node server.js"]
 

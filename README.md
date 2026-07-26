@@ -41,7 +41,59 @@ The app is local-first. The SQLite database lives at `data/bank-of-dad.sqlite` a
 - SQLite diagnostics at `/debug`.
 - Spreadsheet CSV import script.
 
-## Running With Docker
+## Production Deployment (Fly.io)
+
+The app is deployed to Fly.io for free 24/7 hosting.
+
+### View Your Live App
+
+```bash
+flyctl status    # Shows app status and URL
+flyctl open      # Opens app in browser
+```
+
+### Monitor and Manage
+
+```bash
+flyctl logs                 # View real-time logs
+flyctl logs -a the-bank-of-dad  # View logs for specific app
+
+flyctl apps restart         # Restart the app
+flyctl status              # Check app health and status
+
+flyctl ssh console         # SSH into the running container
+flyctl ssh console -C "ls -la /app/data"  # Check database files
+```
+
+### Deployment
+
+```bash
+flyctl deploy              # Deploy latest changes
+flyctl deploy --remote-only  # Build remotely (faster)
+```
+
+### Database Management
+
+The SQLite database is persisted in a Fly.io volume at `/app/data/bank-of-dad.sqlite`.
+
+To backup or inspect the database:
+
+```bash
+# SSH into container
+flyctl ssh console
+
+# Inside the container:
+ls -lh /app/data/           # Check database file
+sqlite3 /app/data/bank-of-dad.sqlite .dump > backup.sql  # Backup (if sqlite3 installed)
+```
+
+### Cost
+
+- Free tier: 256MB RAM, 1GB volume storage
+- No sleep mode - runs 24/7
+- Within Fly.io's free allowances
+
+## Running Locally With Docker
 
 Start the app:
 
