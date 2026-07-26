@@ -1,18 +1,26 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { addTransaction } from "./actions";
 import styles from "./page.module.css";
+import { useToast } from "@/app/toast-provider";
 
 type AddTransactionFormProps = {
   accountId: number;
 };
 
 export function AddTransactionForm({ accountId }: AddTransactionFormProps) {
+  const { showToast } = useToast();
   const [state, formAction, isPending] = useActionState(
     addTransaction.bind(null, accountId),
     {},
   );
+
+  useEffect(() => {
+    if (state.error) {
+      showToast(state.error, 'error');
+    }
+  }, [state.error, showToast]);
 
   return (
     <form action={formAction} className={styles.transactionForm}>

@@ -8,6 +8,7 @@ import {
 } from "@/db/queries";
 import { initializeDatabase, openDatabase } from "@/db";
 import { dollarsToCents } from "@/domain/money";
+import { headers } from "next/headers";
 
 type AddTransactionState = {
   error?: string;
@@ -22,6 +23,13 @@ export async function addTransaction(
   _previousState: AddTransactionState,
   formData: FormData,
 ): Promise<AddTransactionState> {
+  // Check if read-only mode
+  const headersList = await headers();
+  const isReadOnly = headersList.get('x-readonly-mode') === 'true';
+
+  if (isReadOnly) {
+    return { error: "Read-only access: You can view but not modify transactions." };
+  }
   const date = String(formData.get("date") ?? "").trim();
   const type = String(formData.get("type") ?? "").trim();
   const amount = Number(String(formData.get("amount") ?? "").trim());
@@ -70,6 +78,14 @@ export async function removeTransaction(
   accountId: number,
   transactionId: number,
 ) {
+  // Check if read-only mode
+  const headersList = await headers();
+  const isReadOnly = headersList.get('x-readonly-mode') === 'true';
+
+  if (isReadOnly) {
+    throw new Error("Read-only access: You can view but not delete transactions.");
+  }
+
   if (!Number.isInteger(accountId) || accountId <= 0) {
     throw new Error("Invalid account.");
   }
@@ -96,6 +112,14 @@ export async function addInterestRateChange(
   _previousState: AddInterestRateState,
   formData: FormData,
 ): Promise<AddInterestRateState> {
+  // Check if read-only mode
+  const headersList = await headers();
+  const isReadOnly = headersList.get('x-readonly-mode') === 'true';
+
+  if (isReadOnly) {
+    return { error: "Read-only access: You can view but not modify interest rates." };
+  }
+
   const effectiveDate = String(formData.get("effectiveDate") ?? "").trim();
   const annualRate = Number(String(formData.get("annualRate") ?? "").trim());
 

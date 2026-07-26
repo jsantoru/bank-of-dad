@@ -43,7 +43,10 @@ The app is local-first. The SQLite database lives at `data/bank-of-dad.sqlite` a
 
 ## Authentication
 
-The app is protected with HTTP Basic Auth using a single username and password.
+The app is protected with HTTP Basic Auth. Two types of credentials are supported:
+
+- **Admin credentials**: Full access to view and modify all data
+- **Read-only credentials** (optional): Can view all data but cannot add/delete transactions or change interest rates
 
 ### Local Development
 
@@ -54,8 +57,13 @@ The app is protected with HTTP Basic Auth using a single username and password.
 
 2. Edit `.env.local` and set your desired credentials:
    ```bash
+   # Admin credentials (required)
    AUTH_USERNAME=your-username
    AUTH_PASSWORD=your-secure-password
+
+   # Read-only credentials (optional)
+   AUTH_READONLY_USERNAME=viewer
+   AUTH_READONLY_PASSWORD=viewer-password
    ```
 
 3. Start the dev server - you'll be prompted to log in when you visit the site
@@ -65,11 +73,26 @@ The app is protected with HTTP Basic Auth using a single username and password.
 Set the auth credentials as secrets on Fly.io:
 
 ```bash
+# Admin credentials (required)
 flyctl secrets set AUTH_USERNAME=your-username
 flyctl secrets set AUTH_PASSWORD=your-secure-password
+
+# Read-only credentials (optional - for kids to view their balances)
+flyctl secrets set AUTH_READONLY_USERNAME=viewer
+flyctl secrets set AUTH_READONLY_PASSWORD=viewer-password
 ```
 
 The app will restart automatically with the new credentials.
+
+**Read-only users can:**
+- View all accounts and balances
+- See transaction history
+- View interest rates
+
+**Read-only users cannot:**
+- Add or delete transactions
+- Change interest rates
+- Modify any data
 
 ## Production Deployment (Fly.io)
 

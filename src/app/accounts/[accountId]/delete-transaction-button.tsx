@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { removeTransaction } from "./actions";
 import styles from "./page.module.css";
+import { useToast } from "@/app/toast-provider";
 
 type DeleteTransactionButtonProps = {
   accountId: number;
@@ -20,6 +21,7 @@ export function DeleteTransactionButton({
 }: DeleteTransactionButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const { showToast } = useToast();
 
   function closeModal() {
     if (!isPending) {
@@ -29,8 +31,13 @@ export function DeleteTransactionButton({
 
   function confirmDelete() {
     startTransition(async () => {
-      await removeTransaction(accountId, transaction.id);
-      setIsOpen(false);
+      try {
+        await removeTransaction(accountId, transaction.id);
+        setIsOpen(false);
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : 'Failed to delete transaction', 'error');
+        setIsOpen(false);
+      }
     });
   }
 

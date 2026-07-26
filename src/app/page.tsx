@@ -1,6 +1,8 @@
 import Link from "next/link";
 import styles from "./page.module.css";
 import { getDashboardOverview } from "@/db/summaries";
+import { LogoutButton } from "./logout-button";
+import { PiggyBank } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -10,13 +12,16 @@ export default function Home() {
   return (
     <main className={styles.page}>
       <header className={styles.topbar}>
-        <div>
-          <span className={styles.brandMark}>BOD</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <PiggyBank size={24} strokeWidth={2} />
           <span className={styles.brandName}>The Bank of Dad</span>
         </div>
-        <Link className={styles.debugLink} href="/debug">
-          System status
-        </Link>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <Link className={styles.debugLink} href="/debug">
+            System status
+          </Link>
+          <LogoutButton />
+        </div>
       </header>
 
       <section className={styles.hero}>

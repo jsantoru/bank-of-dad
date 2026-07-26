@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { addInterestRateChange } from "./actions";
 import styles from "./page.module.css";
+import { useToast } from "@/app/toast-provider";
 
 type InterestRateButtonProps = {
   accountId: number;
@@ -10,10 +11,17 @@ type InterestRateButtonProps = {
 
 export function InterestRateButton({ accountId }: InterestRateButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { showToast } = useToast();
   const [state, formAction, isPending] = useActionState(
     addInterestRateChange.bind(null, accountId),
     {},
   );
+
+  useEffect(() => {
+    if (state.error) {
+      showToast(state.error, 'error');
+    }
+  }, [state.error, showToast]);
 
   return (
     <>
