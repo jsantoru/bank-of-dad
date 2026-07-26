@@ -2,6 +2,7 @@ import Link from "next/link";
 import styles from "./page.module.css";
 import { getDashboardOverview } from "@/db/summaries";
 import { LogoutButton } from "./logout-button";
+import { AuthStatus } from "./auth-status";
 import { PiggyBank } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -17,9 +18,7 @@ export default function Home() {
           <span className={styles.brandName}>The Bank of Dad</span>
         </div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <Link className={styles.debugLink} href="/debug">
-            System status
-          </Link>
+          <AuthStatus />
           <LogoutButton />
         </div>
       </header>
@@ -33,7 +32,7 @@ export default function Home() {
             account-specific interest policies without rewriting history.
           </p>
           <div className={styles.heroActions}>
-            <Link href="/#accounts">View accounts</Link>
+            <Link href="/about">Learn more</Link>
           </div>
         </div>
         <div
