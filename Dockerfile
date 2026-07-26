@@ -46,6 +46,6 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Run entrypoint as root to handle volume initialization, then switch to nextjs user
-ENTRYPOINT ["/bin/sh", "-c", "if [ ! -f /app/data/bank-of-dad.sqlite ]; then echo 'Initializing database...'; cp /app/data-init/bank-of-dad.sqlite /app/data/bank-of-dad.sqlite && chown nextjs:nodejs /app/data/bank-of-dad.sqlite; fi && exec su-exec nextjs node server.js"]
+# Run entrypoint as root to handle volume initialization and permissions, then switch to nextjs user
+ENTRYPOINT ["/bin/sh", "-c", "chown -R nextjs:nodejs /app/data && if [ ! -f /app/data/bank-of-dad.sqlite ]; then echo 'Initializing database...'; cp /app/data-init/bank-of-dad.sqlite /app/data/bank-of-dad.sqlite && chmod 664 /app/data/bank-of-dad.sqlite; fi && exec su-exec nextjs node server.js"]
 
